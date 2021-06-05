@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "linker",
+    "name": "Linker",
     "slug": "linker",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -8,7 +8,7 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#8000ff"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -21,9 +21,10 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
-      }
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#8000ff"
+      },
+      "package": "br.com.waugustoaf.linker"
     },
     "web": {
       "favicon": "./assets/favicon.png"

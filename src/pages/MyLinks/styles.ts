@@ -16,3 +16,13 @@ export const Title = styled.Text`
 `;
 
 export const LinksList = styled(FlatList as new () => FlatList<Link>)``;
+
+export const EmptyView = styled.View`
+  margin-top: 15%;
+  align-items: center;
+`;
+
+export const EmptyViewText = styled.Text`
+  font-size: 16px;
+  color: #fff;
+`;

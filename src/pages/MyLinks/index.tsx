@@ -1,15 +1,40 @@
-import React, { useCallback, useState } from 'react';
-import { Modal } from 'react-native';
+import { useIsFocused } from '@react-navigation/core';
+import React, { useCallback, useEffect, useState } from 'react';
+import { ActivityIndicator, Modal } from 'react-native';
 import { ListItem } from '../../components/ListItem';
 import { Menu } from '../../components/Menu';
 import { ModalLink } from '../../components/ModalLink';
 import { StatusBarPage } from '../../components/StatusBarPage';
+import { index } from '../../utils/storeLinks';
 import { Link } from '../Home';
-import { Container, LinksList, Title } from './styles';
+import {
+  Container,
+  EmptyView,
+  EmptyViewText,
+  LinksList,
+  Title,
+} from './styles';
 
 export const MyLinks: React.FC = () => {
   const [currentLink, setCurrentLink] = useState<Link>({} as Link);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [linkList, setLinkList] = useState<Link[]>([] as Link[]);
+  const [updateManually, setUpdateManually] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    (async () => {
+      const response = await index();
+      setLinkList(response);
+      setLoading(false);
+    })();
+  }, [updateManually, isFocused]);
+
+  const update = useCallback(() => {
+    setUpdateManually(previousValue => !previousValue);
+  }, []);
 
   const openModal = useCallback(() => {
     setIsModalVisible(true);
@@ -19,13 +44,6 @@ export const MyLinks: React.FC = () => {
     setIsModalVisible(false);
   }, []);
 
-  const links = [
-    { id: '1', link: 'bit.ly/123213', long_url: 'https://waugustoaf.com.br' },
-    { id: '2', link: 'bit.ly/123213', long_url: 'https://waugustoaf.com.br' },
-    { id: '3', link: 'bit.ly/123213', long_url: 'https://waugustoaf.com.br' },
-    { id: '4', link: 'bit.ly/123213', long_url: 'https://waugustoaf.com.br' },
-  ] as Link[];
-
   return (
     <Container>
       <StatusBarPage backgroundColor='#8000ff' barStyle='light-content' />
@@ -34,14 +52,27 @@ export const MyLinks: React.FC = () => {
 
       <Title>Meus Links</Title>
 
+      {loading && (
+        <EmptyView>
+          <ActivityIndicator color='#fff' size={25} />
+        </EmptyView>
+      )}
+
+      {linkList.length === 0 && !loading && (
+        <EmptyView>
+          <EmptyViewText>Você ainda não possui nenhum link</EmptyViewText>
+        </EmptyView>
+      )}
+
       <LinksList
-        data={links}
+        data={linkList}
         keyExtractor={({ id }) => id.toString()}
         renderItem={({ item }) => (
           <ListItem
             link={item}
             openModalMethod={openModal}
             setCurrentLink={setCurrentLink}
+            updateComponent={update}
           />
         )}
         contentContainerStyle={{ paddingBottom: 20 }}

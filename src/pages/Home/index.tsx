@@ -8,10 +8,11 @@ import {
   Modal,
   Platform,
 } from 'react-native';
-import { api } from '../../../services/api';
 import { Menu } from '../../components/Menu';
 import { ModalLink } from '../../components/ModalLink';
 import { StatusBarPage } from '../../components/StatusBarPage';
+import { api } from '../../services/api';
+import { add } from '../../utils/storeLinks';
 import {
   ContentContainer,
   GradientContainer,
@@ -50,6 +51,8 @@ export const Home: React.FC = () => {
       setLoading(false);
       Keyboard.dismiss();
       setInputLink('');
+
+      await add(data);
 
       setResponseLink(data);
       toggleModalVisibility();

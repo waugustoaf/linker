@@ -1,15 +1,28 @@
 import React from 'react';
-import { Text } from 'react-native';
-import { Container } from './styles';
+import { Link } from '../../pages/Home';
+import Icon from '@expo/vector-icons/Feather';
+import { Container, LinkURL } from './styles';
 
 interface ListItemProps {
-  link: string;
+  link: Link;
+  openModalMethod: () => void;
+  setCurrentLink: React.Dispatch<React.SetStateAction<Link>>;
 }
 
-export const ListItem: React.FC<ListItemProps> = ({ link }) => {
+export const ListItem: React.FC<ListItemProps> = ({
+  link,
+  openModalMethod,
+  setCurrentLink,
+}) => {
+  const handleOpenModal = () => {
+    openModalMethod();
+    setCurrentLink(link);
+  };
+
   return (
-    <Container>
-      <Text>{link}</Text>
+    <Container activeOpacity={0.9} onPress={handleOpenModal}>
+      <Icon name='link' color='#fff' size={24} />
+      <LinkURL numberOfLines={1}>{link.long_url}</LinkURL>
     </Container>
   );
 };

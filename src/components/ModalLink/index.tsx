@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   Share,
+  Linking,
 } from 'react-native';
 import ClipBoard from 'expo-clipboard';
 import {
@@ -17,21 +18,34 @@ import {
   ShortLinkUrl,
   Title,
 } from './styles';
+import { Link } from '../../pages/Home';
 
 interface ModalLinkProps {
   onClose: () => void;
+  link: Link;
+  isTopHidden?: boolean;
 }
 
-export const ModalLink: React.FC<ModalLinkProps> = ({ onClose }) => {
+export const ModalLink: React.FC<ModalLinkProps> = ({ onClose, link }) => {
   const handleCopyLink = () => {
-    ClipBoard.setString('https://waugustoaf.com.br');
+    ClipBoard.setString(link.link);
     alert('Link copiado com sucesso!');
+  };
+
+  const handleOpenLink = () => {
+    Linking.canOpenURL(link.link).then(supported => {
+      if (supported) {
+        Linking.openURL(link.link);
+      } else {
+        handleCopyLink();
+      }
+    });
   };
 
   const handleShareLink = async () => {
     try {
       const result = await Share.share({
-        message: `Link: https://waugustoaf.com.br`,
+        message: `Link: ${link.link}`,
       });
 
       if (result.action === Share.sharedAction) {
@@ -66,10 +80,10 @@ export const ModalLink: React.FC<ModalLinkProps> = ({ onClose }) => {
 
         <LinkArea>
           <Title>Link encurtado</Title>
-          <LongURL numberOfLines={1}>https://waugustoaf.com.br</LongURL>
+          <LongURL numberOfLines={1}>{link.long_url}</LongURL>
 
-          <ShortLinkArea activeOpacity={1} onPress={handleCopyLink}>
-            <ShortLinkUrl numberOfLines={1}>https://bit.ly/7dauh8</ShortLinkUrl>
+          <ShortLinkArea activeOpacity={1} onPress={handleOpenLink}>
+            <ShortLinkUrl numberOfLines={1}>{link.link}</ShortLinkUrl>
             <TouchableOpacity onPress={handleCopyLink}>
               <Icon name='copy' color='#fff' size={25} />
             </TouchableOpacity>

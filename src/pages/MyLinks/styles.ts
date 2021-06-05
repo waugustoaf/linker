@@ -1,6 +1,6 @@
 import { FlatList, Platform } from 'react-native';
 import styled from 'styled-components/native';
-import { Link } from '.';
+import { Link } from '../Home';
 
 export const Container = styled.View`
   flex: 1;

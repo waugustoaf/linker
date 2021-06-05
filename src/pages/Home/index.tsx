@@ -1,6 +1,14 @@
 import Icon from '@expo/vector-icons/Feather';
 import React, { useCallback, useState } from 'react';
-import { Keyboard, KeyboardAvoidingView, Modal, Platform } from 'react-native';
+import {
+  ActivityIndicator,
+  Alert,
+  Keyboard,
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+} from 'react-native';
+import { api } from '../../../services/api';
 import { Menu } from '../../components/Menu';
 import { ModalLink } from '../../components/ModalLink';
 import { StatusBarPage } from '../../components/StatusBarPage';
@@ -18,12 +26,42 @@ import {
   Title,
 } from './styles';
 
+export interface Link {
+  id: string;
+  link: string;
+  long_url: string;
+}
+
 export const Home: React.FC = () => {
   const [inputLink, setInputLink] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [responseLink, setResponseLink] = useState<Link>({} as Link);
 
-  const handleShortLink = () => {
-    toggleModalVisibility();
+  const handleShortLink = async () => {
+    setLoading(true);
+
+    try {
+      const response = await api.post('/shorten', {
+        long_url: inputLink,
+      });
+      const data = response.data as Link;
+
+      setLoading(false);
+      Keyboard.dismiss();
+      setInputLink('');
+
+      setResponseLink(data);
+      toggleModalVisibility();
+    } catch (err) {
+      Alert.alert(
+        'Ops, houve um erro!',
+        'Não foi possível encurtar seu link. Tente novamente!',
+      );
+      Keyboard.dismiss();
+      setInputLink('');
+      setLoading(false);
+    }
   };
 
   const toggleModalVisibility = useCallback(() => {
@@ -49,7 +87,7 @@ export const Home: React.FC = () => {
           enabled
         >
           <ContentContainer>
-            <Title>waugustoaf</Title>
+            <Title>Linker</Title>
             <SubTitle>Cole seu link para encurtar</SubTitle>
 
             <InputContainer>
@@ -67,13 +105,17 @@ export const Home: React.FC = () => {
             </InputContainer>
 
             <LinkButton onPress={handleShortLink}>
-              <LinkButtonText>Gerar Link</LinkButtonText>
+              {loading ? (
+                <ActivityIndicator color='#8000ff' size={24} />
+              ) : (
+                <LinkButtonText>Gerar Link</LinkButtonText>
+              )}
             </LinkButton>
           </ContentContainer>
         </KeyboardAvoidingView>
 
         <Modal visible={isModalVisible} transparent animationType='slide'>
-          <ModalLink onClose={toggleModalVisibility} />
+          <ModalLink link={responseLink} onClose={toggleModalVisibility} />
         </Modal>
       </GradientContainer>
     </OutKeyboardButton>

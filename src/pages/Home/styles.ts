@@ -8,6 +8,8 @@ export const GradientContainer = styled(LinearGradient)`
   justify-content: center;
 `;
 
+export const OutKeyboardButton = styled.TouchableWithoutFeedback``;
+
 export const LogoContainer = styled.View`
   align-items: center;
   justify-content: center;
